@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+<link rel="icon" type="image/png" sizes="96x96" href="me.png">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>正在跳转...</title>
+    <title>正在加载...</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     
@@ -50,7 +51,7 @@
     <!-- 背景图 - 20%透明度 -->
     <div class="absolute inset-0 z-0">
         <img 
-            src="https://picsum.photos/id/1033/1920/1080" 
+            src="Cat.webp" 
             alt="背景图" 
             class="w-full h-full object-cover opacity-20"
         >
@@ -74,10 +75,10 @@
             </div>
             
             <!-- 标题 -->
-            <h1 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold text-center text-dark mb-3">正在跳转</h1>
+            <h1 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold text-center text-dark mb-3">正在加载中，请耐心等待</h1>
             
             <!-- 描述 -->
-            <p class="text-gray-600 text-center mb-6">正在加载新站点内容...</p>
+            <p class="text-gray-600 text-center mb-6">正在加载小游戏...</p>
             
             <!-- 进度条 -->
             <div class="h-2 w-full bg-gray-200 rounded-full overflow-hidden mb-8">
@@ -87,7 +88,7 @@
             <!-- 状态提示 -->
             <p id="status-text" class="text-center text-gray-500 mb-6">
                 <i class="fa fa-spinner fa-spin mr-2"></i>
-                <span>准备加载新站点</span>
+                <span>加载中</span>
             </p>
             
             <!-- 备用链接 -->
@@ -97,7 +98,7 @@
                     id="manual-link"
                     class="text-primary hover:text-primary/80 font-medium transition-all-300 flex items-center justify-center"
                 >
-                    <span>手动访问新站点</span>
+                    <span>如果加载失败，点击这里</span>
                     <i class="fa fa-arrow-right ml-2"></i>
                 </a>
             </p>
@@ -106,7 +107,7 @@
     
     <!-- 页脚 -->
     <div class="absolute bottom-6 z-20 text-center text-gray-500 text-sm">
-        <p>© 2025 您的公司名称 | 保留所有权利</p>
+        <p>喵了个咪 © 2025 | Kaiyuan保留所有权利</p>
     </div>
     
     <!-- 预加载iframe -->
@@ -181,7 +182,7 @@
             
             // 错误处理
             preloadFrame.onerror = function() {
-                showError('新站点加载失败，将自动跳转');
+                showError('游戏加载失败，将自动跳转');
                 
                 // 无论如何都执行跳转
                 setTimeout(() => {
@@ -213,11 +214,11 @@
         
         // 备用跳转方法 - 使用fetch API预加载
         function fallbackPreload() {
-            updateStatus('正在检查新站点...');
+            updateStatus('正在检查...');
             
             fetch(targetUrl, { mode: 'no-cors' })
                 .then(() => {
-                    updateStatus('新站点就绪，准备跳转');
+                    updateStatus('游戏准备就绪，正在进行');
                     progressBar.style.width = '90%';
                     
                     setTimeout(() => {
@@ -225,7 +226,7 @@
                     }, 1000);
                 })
                 .catch(() => {
-                    showError('无法预加载新站点，正在跳转...');
+                    showError('无法预加载游戏，正在进行...');
                     setTimeout(() => {
                         window.location.href = targetUrl;
                     }, 1500);
