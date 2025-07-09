@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>正在跳转...</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- Tailwind配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#36D399',
+                        dark: '#1E293B',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .bg-blur {
+                backdrop-filter: blur(8px);
+            }
+            .transition-all-300 {
+                transition: all 0.3s ease-in-out;
+            }
+            .fade-out {
+                animation: fadeOut 0.5s forwards;
+            }
+            @keyframes fadeOut {
+                from { opacity: 1; }
+                to { opacity: 0; }
+            }
+        }
+    </style>
+</head>
+<body class="font-inter bg-gray-50 min-h-screen flex items-center justify-center overflow-hidden relative">
+    <!-- 背景图 - 20%透明度 -->
+    <div class="absolute inset-0 z-0">
+        <img 
+            src="https://picsum.photos/id/1033/1920/1080" 
+            alt="背景图" 
+            class="w-full h-full object-cover opacity-20"
+        >
+    </div>
+    
+    <!-- 渐变覆盖层 -->
+    <div class="absolute inset-0 bg-gradient-to-br from-primary/10 to-dark/10 z-10"></div>
+    
+    <!-- 主内容卡片 -->
+    <div id="redirect-card" class="relative z-20 w-full max-w-md mx-4 bg-white/80 bg-blur rounded-2xl shadow-2xl overflow-hidden border border-white/30">
+        <!-- 顶部装饰条 -->
+        <div class="h-2 bg-gradient-to-r from-primary to-secondary"></div>
+        
+        <!-- 卡片内容 -->
+        <div class="p-8">
+            <!-- 图标 -->
+            <div class="flex justify-center mb-6">
+                <div class="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
+                    <i class="fa fa-exchange text-4xl text-primary"></i>
+                </div>
+            </div>
+            
+            <!-- 标题 -->
+            <h1 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold text-center text-dark mb-3">正在跳转</h1>
+            
+            <!-- 描述 -->
+            <p class="text-gray-600 text-center mb-6">正在加载新站点内容...</p>
+            
+            <!-- 进度条 -->
+            <div class="h-2 w-full bg-gray-200 rounded-full overflow-hidden mb-8">
+                <div id="progress-bar" class="h-full bg-gradient-to-r from-primary to-secondary w-0 transition-all-300"></div>
+            </div>
+            
+            <!-- 状态提示 -->
+            <p id="status-text" class="text-center text-gray-500 mb-6">
+                <i class="fa fa-spinner fa-spin mr-2"></i>
+                <span>准备加载新站点</span>
+            </p>
+            
+            <!-- 备用链接 -->
+            <p class="text-center">
+                <a 
+                    href="https://cat-8nk.pages.dev" 
+                    id="manual-link"
+                    class="text-primary hover:text-primary/80 font-medium transition-all-300 flex items-center justify-center"
+                >
+                    <span>手动访问新站点</span>
+                    <i class="fa fa-arrow-right ml-2"></i>
+                </a>
+            </p>
+        </div>
+    </div>
+    
+    <!-- 页脚 -->
+    <div class="absolute bottom-6 z-20 text-center text-gray-500 text-sm">
+        <p>© 2025 您的公司名称 | 保留所有权利</p>
+    </div>
+    
+    <!-- 预加载iframe -->
+    <iframe 
+        id="preload-frame" 
+        src="https://cat-8nk.pages.dev" 
+        sandbox="allow-same-origin allow-scripts" 
+        class="absolute opacity-0 pointer-events-none"
+    ></iframe>
+
+    <script>
+        // 目标URL
+        const targetUrl = 'https://cat-8nk.pages.dev';
+        
+        // DOM元素
+        const progressBar = document.getElementById('progress-bar');
+        const statusText = document.getElementById('status-text');
+        const redirectCard = document.getElementById('redirect-card');
+        const preloadFrame = document.getElementById('preload-frame');
+        const manualLink = document.getElementById('manual-link');
+        
+        // 记录开始时间
+        const startTime = performance.now();
+        
+        // 显示加载状态
+        function updateStatus(message) {
+            statusText.innerHTML = `<i class="fa fa-spinner fa-spin mr-2"></i><span>${message}</span>`;
+        }
+        
+        // 显示错误状态
+        function showError(message) {
+            statusText.innerHTML = `<i class="fa fa-exclamation-circle text-red-500 mr-2"></i><span class="text-red-500">${message}</span>`;
+            progressBar.classList.add('bg-red-500');
+        }
+        
+        // 完成加载并跳转
+        function completeRedirect() {
+            // 计算实际加载时间
+            const loadTime = Math.round((performance.now() - startTime) / 1000);
+            
+            // 更新状态
+            updateStatus(`加载完成 (${loadTime}秒)`);
+            progressBar.style.width = '100%';
+            
+            // 短暂延迟后跳转
+            setTimeout(() => {
+                // 隐藏加载界面
+                redirectCard.classList.add('fade-out');
+                
+                // 延迟后执行跳转
+                setTimeout(() => {
+                    window.location.href = targetUrl;
+                }, 500);
+            }, 500);
+        }
+        
+        // 初始化预加载
+        function initPreload() {
+            updateStatus('正在预加载新站点...');
+            
+            try {
+                // 尝试设置document.domain以优化同源加载
+                document.domain = window.location.hostname.split('.').slice(-2).join('.');
+            } catch (e) {
+                console.warn('无法设置document.domain:', e);
+            }
+            
+            // 监听iframe加载状态
+            preloadFrame.onload = function() {
+                completeRedirect();
+            };
+            
+            // 错误处理
+            preloadFrame.onerror = function() {
+                showError('新站点加载失败，将自动跳转');
+                
+                // 无论如何都执行跳转
+                setTimeout(() => {
+                    window.location.href = targetUrl;
+                }, 2000);
+            };
+            
+            // 超时处理
+            setTimeout(() => {
+                if (progressBar.style.width !== '100%') {
+                    showError('加载超时，正在跳转...');
+                    setTimeout(() => {
+                        window.location.href = targetUrl;
+                    }, 1000);
+                }
+            }, 10000); // 10秒超时
+            
+            // 更新进度条
+            const updateInterval = setInterval(() => {
+                const currentWidth = parseFloat(progressBar.style.width || '0');
+                const newWidth = Math.min(currentWidth + 2, 98);
+                progressBar.style.width = `${newWidth}%`;
+                
+                if (newWidth >= 98) {
+                    clearInterval(updateInterval);
+                }
+            }, 200);
+        }
+        
+        // 备用跳转方法 - 使用fetch API预加载
+        function fallbackPreload() {
+            updateStatus('正在检查新站点...');
+            
+            fetch(targetUrl, { mode: 'no-cors' })
+                .then(() => {
+                    updateStatus('新站点就绪，准备跳转');
+                    progressBar.style.width = '90%';
+                    
+                    setTimeout(() => {
+                        window.location.href = targetUrl;
+                    }, 1000);
+                })
+                .catch(() => {
+                    showError('无法预加载新站点，正在跳转...');
+                    setTimeout(() => {
+                        window.location.href = targetUrl;
+                    }, 1500);
+                });
+        }
+        
+        // 启动预加载
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                // 尝试使用iframe预加载
+                initPreload();
+            } catch (e) {
+                console.error('iframe预加载失败:', e);
+                // 回退到fetch预加载
+                fallbackPreload();
+            }
+        });
+        
+        // 设置手动链接
+        manualLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = targetUrl;
+        });
+    </script>
+</body>
+</html>
