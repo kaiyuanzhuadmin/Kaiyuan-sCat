@@ -249,12 +249,12 @@
             // 超时处理
             setTimeout(() => {
                 if (progressBar.style.width !== '100%') {
-                    showError('加载超时，正在跳转...');
+                    showError('网络加载缓慢，正在重试...');
                     setTimeout(() => {
                         window.location.href = targetUrl;
                     }, 1000);
                 }
-            }, 10000); // 10秒超时
+            }, 15000); // 10秒超时
             
             // 更新进度条和状态消息
             let messageIndex = 0;
